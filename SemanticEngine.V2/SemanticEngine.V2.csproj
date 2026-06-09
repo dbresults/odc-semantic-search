@@ -7,6 +7,10 @@
   </PropertyGroup>
   
   <ItemGroup>
+    <EmbeddedResource Include="Logo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="OutSystems.ExternalLibraries.SDK" Version="1.5.0" />
     <PackageReference Include="PdfPig" Version="0.1.12" />
   </ItemGroup>
