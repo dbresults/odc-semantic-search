@@ -52,7 +52,6 @@ public static class PdfTextExtractor
         return result;
     }
 
-    // Optional helper if you still want a single string output somewhere
     public static string ExtractTextFromPdfWithPageMarkers(
         byte[] pdfBytes,
         int maxPages = 0,

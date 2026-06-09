@@ -42,14 +42,12 @@ public static class TopKVectorSearch
         {
             if (c == null || string.IsNullOrWhiteSpace(c.VectorJson)) continue;
 
-            // RESTORED: This defines 'vec' which was missing
             var vec = VectorSerializer.DeserializeFromJson(c.VectorJson);
             if (vec.Length != queryVector.Length) continue;
 
             float score = CosineSimilarity.Compute(queryVector, vec);
 
-            // Apply the threshold filter
-            if (score >= minScore) 
+            if (score >= minScore)
             {
                 scored.Add(new VectorSearchResult
                 {

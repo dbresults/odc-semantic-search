@@ -2,7 +2,7 @@ namespace SemanticEngine.V2.Contracts;
 
 public sealed class VectorSearchResultDto
 {
-    public int Rank { get; set; } // New field from screenshot
+    public int Rank { get; set; }
     public float Score { get; set; }
     public string Id { get; set; } = string.Empty;
     // Include the metadata in the result

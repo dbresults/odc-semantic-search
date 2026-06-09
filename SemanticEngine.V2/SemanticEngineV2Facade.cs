@@ -32,7 +32,6 @@ public static class SemanticEngineV2Facade
         if (pdfBytes == null || pdfBytes.Length == 0)
             throw new ArgumentException("PDF bytes are empty.", nameof(pdfBytes));
 
-        // 🔒 ODC safety defaults (THIS IS THE RIGHT PLACE)
         maxPages = (maxPages <= 0) ? 50 : maxPages;
         chunkSize = (chunkSize <= 0) ? 1000 : chunkSize;
         overlap = (overlap < 0) ? 150 : overlap;
@@ -48,8 +47,6 @@ public static class SemanticEngineV2Facade
             model,
             isAzure);
 
-        // IMPORTANT:
-        // Use GetAwaiter().GetResult() to avoid deadlocks in non-async hosts
         return IngestionOrchestrator
             .PrepareVectorsFromPdfAsync(
                 pdfBytes,
@@ -102,7 +99,6 @@ public static class SemanticEngineV2Facade
 
         var queryVector = VectorSerializer.DeserializeFromJson(queryVectorJson);
 
-        // Convert DTO -> internal candidate type
         var internalCandidates = new List<VectorCandidate>(candidates.Count);
         foreach (var c in candidates)
         {
@@ -111,7 +107,7 @@ public static class SemanticEngineV2Facade
             {
                 Id = c.Id ?? string.Empty,
                 VectorJson = c.VectorJson ?? "[]",
-                PageNumber = c.PageNumber,    // Map metadata
+                PageNumber = c.PageNumber,
                 ChunkIndex = c.ChunkIndex,
                 ChunkText = c.ChunkText,
                 ChunkHash = c.ChunkHash
@@ -120,18 +116,16 @@ public static class SemanticEngineV2Facade
 
         var results = TopKVectorSearch.Search(queryVector, internalCandidates, topK, minScore);
 
-        int rank = 1; // FIX: Declaration and initialization added here
-
-        // Convert internal result -> DTO
+        int rank = 1;
         var dto = new List<VectorSearchResultDto>(results.Count);
         foreach (var r in results)
         {
             dto.Add(new VectorSearchResultDto
             {
-                Rank = rank++,               // Assign rank
+                Rank = rank++,
                 Id = r.Id,
                 Score = r.Score,
-                PageNumber = r.PageNumber,    // Return metadata
+                PageNumber = r.PageNumber,
                 ChunkIndex = r.ChunkIndex,
                 ChunkText = r.ChunkText,
                 ChunkHash = r.ChunkHash
@@ -164,7 +158,6 @@ public static class SemanticEngineV2Facade
             .GetAwaiter()
             .GetResult();
 
-        // Convert DTO -> internal candidate type
         var internalCandidates = new List<VectorCandidate>(candidates.Count);
         foreach (var c in candidates)
         {
@@ -173,7 +166,7 @@ public static class SemanticEngineV2Facade
             {
                 Id = c.Id ?? string.Empty,
                 VectorJson = c.VectorJson ?? "[]",
-                PageNumber = c.PageNumber,    // Map metadata
+                PageNumber = c.PageNumber,
                 ChunkIndex = c.ChunkIndex,
                 ChunkText = c.ChunkText,
                 ChunkHash = c.ChunkHash
@@ -182,18 +175,16 @@ public static class SemanticEngineV2Facade
 
         var results = TopKVectorSearch.Search(queryVector, internalCandidates, topK, minScore);
 
-        int rank = 1; // FIX: Declaration and initialization added here
-
-        // Convert internal result -> DTO
+        int rank = 1;
         var dto = new List<VectorSearchResultDto>(results.Count);
         foreach (var r in results)
         {
             dto.Add(new VectorSearchResultDto
             {
-                Rank = rank++,               // Assign rank
+                Rank = rank++,
                 Id = r.Id,
                 Score = r.Score,
-                PageNumber = r.PageNumber,    // Return metadata
+                PageNumber = r.PageNumber,
                 ChunkIndex = r.ChunkIndex,
                 ChunkText = r.ChunkText,
                 ChunkHash = r.ChunkHash

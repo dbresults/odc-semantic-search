@@ -15,6 +15,9 @@ deploy/
 # VS Code local history
 .history/
 
+# Claude Code
+CLAUDE.md
+
 # User-specific files
 *.user
 *.suo

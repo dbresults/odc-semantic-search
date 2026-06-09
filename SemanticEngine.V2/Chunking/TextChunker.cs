@@ -98,12 +98,10 @@ public static class TextChunker
 
             if (end < text.Length)
             {
-                // 1. END BOUNDARY FIX: Look back for a space so we don't slice a word
+                // Walk back to a word boundary to avoid splitting mid-word
                 int lastSpace = text.LastIndexOf(' ', end, end - start);
                 if (lastSpace > start)
-                {
                     end = lastSpace;
-                }
             }
 
             var slice = text.Substring(start, end - start).Trim();
@@ -119,28 +117,22 @@ public static class TextChunker
 
             if (end >= text.Length) break;
 
-            // 2. START BOUNDARY FIX (Fixes "letion"):
-            // Start at the mathematical overlap point...
             int nextStart = end - overlap;
             if (nextStart < 0) nextStart = 0;
 
-            // ...then search FORWARD for the next space to ensure the overlap starts with a full word
+            // Advance to the next word boundary so the overlap region starts on a complete word
             if (nextStart < end)
             {
                 int nextSpace = text.IndexOf(' ', nextStart, end - nextStart);
                 if (nextSpace != -1)
-                {
-                    nextStart = nextSpace + 1; // Start right after the space
-                }
+                    nextStart = nextSpace + 1;
             }
 
             start = nextStart;
 
-            // Final safety: if we aren't making forward progress, force a jump to the end boundary
-            if (start <= (end - chunkSize) || start >= end) 
-            {
+            // Guard against no-progress loops
+            if (start <= (end - chunkSize) || start >= end)
                 start = end;
-            }
         }
     }
 
