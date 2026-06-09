@@ -3,7 +3,7 @@ using OutSystems.ExternalLibraries.SDK;
 
 namespace SemanticEngine.V2.ODC
 {
-    [OSInterface(Description = "ODC-native vector ingestion and semantic search primitives (V2). JSON contracts.")]
+    [OSInterface(Description = "ODC-native vector ingestion and semantic search primitives (V2). JSON contracts.", IconResourceName = "SemanticEngine.V2.Logo.png")]
     public interface ISemanticEngineV2
     {
         [OSAction(Description = "Extracts PDF text, chunks it, and generates embeddings. Returns a JSON array of IngestionVectorRecord. Use during RAG ingestion.")]
