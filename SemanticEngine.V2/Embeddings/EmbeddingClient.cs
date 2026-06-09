@@ -54,7 +54,6 @@ public sealed class EmbeddingClient
 
         using var response = await _http.SendAsync(request).ConfigureAwait(false);
 
-        // --- DEBUG: Catch the real error message from the server ---
         if (!response.IsSuccessStatusCode)
         {
             var errorBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
