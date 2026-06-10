@@ -25,6 +25,17 @@ No vector database required — embeddings are stored as JSON strings in your OD
 3. Upload the ZIP — ODC will surface four actions under the library name
 4. Add the library to your ODC app and configure your embedding endpoint and API key as **Site Properties** or **Secrets**
 
+## Companion Workflow
+
+[`OML/RAGKBEmbedFile.oml`](OML/RAGKBEmbedFile.oml) is an OutSystems Workflow module that embeds a file saved in a RAG Knowledge Base using this library. Forge does not support uploading Workflow-type modules as part of a library submission, so the `.oml` is committed directly to this repository instead.
+
+To use it:
+
+1. Upload `SemanticEngine.V2.zip` to your environment as an External Library (see [ODC Setup](#odc-setup)) if you haven't already
+2. In Service Studio, open `OML/RAGKBEmbedFile.oml` (File → Open Module, or drag the file into Service Studio)
+3. Resolve the dependency on `SemanticEngine.V2`
+4. Publish the module to your environment
+
 ## Actions
 
 ### `PrepareVectorsFromPdfJson`
