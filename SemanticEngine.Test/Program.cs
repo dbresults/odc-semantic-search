@@ -2,8 +2,7 @@
 using System.IO;
 using SemanticEngine.V2;
 
-// 1. Setup your test parameters (Matches your ODC Screenshot)
-// Set OPENAI_API_KEY (or AZURE_OPENAI_API_KEY) in your environment before running.
+// Set OPENAI_API_KEY (and optionally OPENAI_ENDPOINT, OPENAI_MODEL, OPENAI_IS_AZURE) before running.
 string pdfPath   = "File.pdf";
 string endpoint  = Environment.GetEnvironmentVariable("OPENAI_ENDPOINT") ?? "https://api.openai.com";
 string apiKey    = Environment.GetEnvironmentVariable("OPENAI_API_KEY")

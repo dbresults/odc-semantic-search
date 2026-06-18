@@ -15,8 +15,12 @@ deploy/
 # VS Code local history
 .history/
 
-# Claude Code
-CLAUDE.md
+# Internal dev notes
+CLAUDE*.md
+EMBEDDING-FLOW.md
+
+# Test assets — place locally, do not commit
+SemanticEngine.Test/File.pdf
 
 # User-specific files
 *.user
