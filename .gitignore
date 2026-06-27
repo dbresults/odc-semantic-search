@@ -8,6 +8,7 @@ publish/
 odc_pkg/
 deploy/
 *.zip
+!SemanticEngine.V2.zip
 
 # macOS
 .DS_Store

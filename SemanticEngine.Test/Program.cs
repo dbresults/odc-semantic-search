@@ -10,6 +10,13 @@ string apiKey    = Environment.GetEnvironmentVariable("OPENAI_API_KEY")
 string model     = Environment.GetEnvironmentVariable("OPENAI_MODEL") ?? "text-embedding-3-small";
 bool   isAzure   = string.Equals(Environment.GetEnvironmentVariable("OPENAI_IS_AZURE"), "true", StringComparison.OrdinalIgnoreCase);
 
+// HashText smoke test — no API key needed
+const string expectedHash = "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824";
+string actualHash = SemanticEngineV2Facade.HashText("hello");
+if (actualHash != expectedHash)
+    throw new Exception($"HashText sanity check failed. Expected: {expectedHash} Got: {actualHash}");
+Console.WriteLine($"HashText OK: {actualHash}");
+
 // 2. Load the file
 byte[] pdfBytes = File.ReadAllBytes(pdfPath);
 
