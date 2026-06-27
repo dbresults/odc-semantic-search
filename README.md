@@ -12,6 +12,7 @@ No vector database required — embeddings are stored as JSON strings in your OD
 | Debug | `ExtractTextFromPdfWithPageMarkers` | PDF → plain text with `===PAGE:N===` markers, no API call |
 | Search (end-to-end) | `EmbedAndSearchTopKJson` | Embed query text → cosine similarity → top-K results |
 | Search (pre-computed) | `SearchTopKByCosineJson` | Cosine similarity only, no API call — use when you already have the query vector |
+| Utility | `HashText` | SHA-256 hex hash of any string — use to build stable cache keys for query vectors |
 
 ## Prerequisites
 
@@ -22,7 +23,7 @@ No vector database required — embeddings are stored as JSON strings in your OD
 
 1. Download `SemanticEngine.V2.zip` from [Releases](https://github.com/dbresults/odc-semantic-search/releases) or build it yourself (see below)
 2. In the **ODC Portal**, go to **External Libraries → Upload**
-3. Upload the ZIP — ODC will surface four actions under the library name
+3. Upload the ZIP — ODC will surface five actions under the library name
 4. Add the library to your ODC app and configure your embedding endpoint and API key as **Site Properties** or **Secrets**
 
 ## Companion Workflow
@@ -122,6 +123,20 @@ Pure cosine similarity search with no API call. Use this when you already have t
 | `candidatesJson` | Text | JSON array of `VectorCandidateDto` |
 | `topK` | Integer | Number of results to return |
 | `minScore` | Decimal | Minimum cosine similarity threshold |
+
+---
+
+### `HashText`
+
+Generates a SHA-256 hex hash of any input string. No API call. Use this to build a stable, deterministic cache key for a query string — store the hash alongside the cached vector so you can skip re-embedding on repeated queries.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `inputText` | Text | The string to hash |
+
+**Returns:** Lowercase SHA-256 hex string (64 characters), or empty string if input is empty.
+
+**Example:** `HashText("what is the refund policy?")` → `"a3f9..."`
 
 ---
 
