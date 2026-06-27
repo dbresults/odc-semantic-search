@@ -46,5 +46,14 @@ namespace SemanticEngine.V2.ODC
             int topK,
             float minScore
         );
+
+        [OSAction(
+            Description = "Generates a SHA-256 hash of the input text. Use this to create a stable cache key for a query string.",
+            ReturnName = "HashHex"
+        )]
+        string HashText(
+            [OSParameter(Description = "The plain text string to hash.")]
+            string inputText
+        );
     }
 }

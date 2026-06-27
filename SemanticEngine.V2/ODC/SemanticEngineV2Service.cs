@@ -116,6 +116,11 @@ namespace SemanticEngine.V2.ODC
             return JsonSerializer.Serialize(results, JsonOpts);
         }
 
+        public string HashText(string inputText)
+        {
+            return SemanticEngineV2Facade.HashText(inputText);
+        }
+
         private static List<VectorCandidateDto> DeserializeCandidates(string candidatesJson)
         {
             if (string.IsNullOrWhiteSpace(candidatesJson))

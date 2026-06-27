@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Security.Cryptography;
+using System.Text;
 using SemanticEngine.V2.Contracts;
 using SemanticEngine.V2.Core;
 using SemanticEngine.V2.Embeddings;
@@ -132,6 +134,15 @@ public static class SemanticEngineV2Facade
             });
         }
         return dto;
+    }
+
+    public static string HashText(string inputText)
+    {
+        if (string.IsNullOrEmpty(inputText))
+            return string.Empty;
+
+        var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(inputText));
+        return Convert.ToHexString(bytes).ToLowerInvariant();
     }
 
     public static List<VectorSearchResultDto> EmbedAndSearchTopK(
