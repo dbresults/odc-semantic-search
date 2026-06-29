@@ -12,6 +12,7 @@ No vector database required — embeddings are stored as JSON strings in your OD
 | Debug | `ExtractTextFromPdfWithPageMarkers` | PDF → plain text with `===PAGE:N===` markers, no API call |
 | Search (end-to-end) | `EmbedAndSearchTopKJson` | Embed query text → cosine similarity → top-K results |
 | Search (pre-computed) | `SearchTopKByCosineJson` | Cosine similarity only, no API call — use when you already have the query vector |
+| Utility | `EmbedTextToVectorJson` | Embed a text string and return the raw vector JSON — use to pre-compute and cache query vectors |
 | Utility | `HashText` | SHA-256 hex hash of any string — use to build stable cache keys for query vectors |
 
 ## Prerequisites
@@ -23,7 +24,7 @@ No vector database required — embeddings are stored as JSON strings in your OD
 
 1. Download `SemanticEngine.V2.zip` from [Releases](https://github.com/dbresults/odc-semantic-search/releases) or build it yourself (see below)
 2. In the **ODC Portal**, go to **External Libraries → Upload**
-3. Upload the ZIP — ODC will surface five actions under the library name
+3. Upload the ZIP — ODC will surface six actions under the library name
 4. Add the library to your ODC app and configure your embedding endpoint and API key as **Site Properties** or **Secrets**
 
 ## Companion Workflow
@@ -126,6 +127,29 @@ Pure cosine similarity search with no API call. Use this when you already have t
 
 ---
 
+### `EmbedTextToVectorJson`
+
+Embeds a text string via the API and returns the vector as a serialized JSON float array. Use this to pre-compute a query vector once and cache it in an ODC entity. On subsequent searches, pass the cached vector to `SearchTopKByCosineJson` to skip the embedding API call entirely.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `inputText` | Text | The text to embed |
+| `endpoint` | Text | Embedding API base URL (e.g. `https://api.openai.com`) |
+| `apiKey` | Text | API key |
+| `model` | Text | Model name — must match the model used during ingestion |
+| `isAzure` | Boolean | `True` for Azure OpenAI, `False` for OpenAI |
+
+**Returns:** `VectorJson` (Text) — serialized float array, e.g. `[0.0123,-0.0456,...]`
+
+**Typical caching pattern in ODC:**
+```
+HashText(queryText) → hash
+GetCachedVector(hash) → hit? → SearchTopKByCosineJson(cachedVector, ...)
+                      → miss? → EmbedTextToVectorJson(...) → store → SearchTopKByCosineJson(newVector, ...)
+```
+
+---
+
 ### `HashText`
 
 Generates a SHA-256 hex hash of any input string. No API call. Use this to build a stable, deterministic cache key for a query string — store the hash alongside the cached vector so you can skip re-embedding on repeated queries.
@@ -147,11 +171,19 @@ Generates a SHA-256 hex hash of any input string. No API call. Use this to build
   → PrepareVectorsFromPdfJson
   → For each record: Create VectorChunk entity record (store ChunkText + VectorJson)
 
-[User Query]
+[User Query — simple]
   → EmbedAndSearchTopKJson (pass stored VectorChunk records as candidatesJson)
   → Take top 1–3 ChunkText values
   → Append to your LLM prompt as context
   → Call your LLM action
+
+[User Query — with vector caching]
+  → HashText(queryText) → hash
+  → Check CachedVector entity for hash
+      Hit:  SearchTopKByCosineJson(cachedVectorJson, ...)   ← no API call
+      Miss: EmbedTextToVectorJson(...) → store in CachedVector entity
+            SearchTopKByCosineJson(newVectorJson, ...)
+  → Take top 1–3 ChunkText values → call your LLM action
 ```
 
 ## Building from source
