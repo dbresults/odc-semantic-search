@@ -116,6 +116,23 @@ namespace SemanticEngine.V2.ODC
             return JsonSerializer.Serialize(results, JsonOpts);
         }
 
+        public string EmbedTextToVectorJson(
+            string inputText,
+            string endpoint,
+            string apiKey,
+            string model,
+            bool isAzure)
+        {
+            model = NormalizeModel(model);
+
+            return SemanticEngineV2Facade.EmbedTextToVectorJson(
+                inputText,
+                endpoint,
+                apiKey,
+                model,
+                isAzure);
+        }
+
         public string HashText(string inputText)
         {
             return SemanticEngineV2Facade.HashText(inputText);

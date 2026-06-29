@@ -55,5 +55,22 @@ namespace SemanticEngine.V2.ODC
             [OSParameter(Description = "The plain text string to hash.")]
             string inputText
         );
+
+        [OSAction(
+            Description = "Embeds a text string and returns the vector as a serialized JSON float array. Use this to pre-compute and cache a query vector so repeated searches avoid redundant API calls.",
+            ReturnName = "VectorJson"
+        )]
+        string EmbedTextToVectorJson(
+            [OSParameter(Description = "The text to embed.")]
+            string inputText,
+            [OSParameter(Description = "Embedding API base URL (e.g. https://api.openai.com).")]
+            string endpoint,
+            [OSParameter(Description = "API key.")]
+            string apiKey,
+            [OSParameter(Description = "Embedding model name (e.g. text-embedding-3-small).")]
+            string model,
+            [OSParameter(Description = "True for Azure OpenAI, False for OpenAI.")]
+            bool isAzure
+        );
     }
 }

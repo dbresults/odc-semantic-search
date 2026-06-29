@@ -136,6 +136,25 @@ public static class SemanticEngineV2Facade
         return dto;
     }
 
+    public static string EmbedTextToVectorJson(
+        string inputText,
+        string endpoint,
+        string apiKey,
+        string model,
+        bool isAzure)
+    {
+        if (string.IsNullOrWhiteSpace(inputText))
+            throw new ArgumentException("Input text is empty.", nameof(inputText));
+
+        var embeddingClient = new EmbeddingClient(_httpClient, endpoint, apiKey, model, isAzure);
+
+        var vector = embeddingClient.GenerateEmbeddingAsync(inputText)
+            .GetAwaiter()
+            .GetResult();
+
+        return VectorSerializer.SerializeToJson(vector);
+    }
+
     public static string HashText(string inputText)
     {
         if (string.IsNullOrEmpty(inputText))
