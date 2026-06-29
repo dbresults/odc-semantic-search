@@ -47,7 +47,7 @@ namespace SemanticEngine.V2.ODC
         );
 
         [OSAction(
-            Description = "Embeds the query text via the API and returns the most relevant stored chunks ranked by cosine similarity. Use this in your search flow when you do not have a cached query vector.",
+            Description = "Embeds the query text via the API and returns the most relevant stored chunks ranked by cosine similarity. Also returns the query vector so you can cache it and use SearchTopKByCosineJson on repeat searches to avoid redundant API calls.",
             ReturnName = "SearchResultsJson"
         )]
         string EmbedAndSearchTopKJson(
@@ -66,7 +66,9 @@ namespace SemanticEngine.V2.ODC
             [OSParameter(Description = "Number of top results to return (default 5).")]
             int topK,
             [OSParameter(Description = "Minimum cosine similarity score to include in results, from 0.0 to 1.0. Set to 0 for no threshold.")]
-            float minScore
+            float minScore,
+            [OSParameter(Description = "Output: the query vector as a serialized JSON float array. Store this alongside HashText(queryText) to cache the vector and skip the embedding API call on repeat searches.")]
+            out string queryVectorJson
         );
 
         [OSAction(

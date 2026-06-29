@@ -77,19 +77,19 @@ namespace SemanticEngine.V2.ODC
             bool isAzure,
             string candidatesJson,
             int topK,
-            float minScore)
+            float minScore,
+            out string queryVectorJson)
         {
             model = NormalizeModel(model);
             topK = NormalizeTopK(topK);
 
+            queryVectorJson = SemanticEngineV2Facade.EmbedTextToVectorJson(
+                queryText, endpoint, apiKey, model, isAzure);
+
             var candidates = DeserializeCandidates(candidatesJson);
 
-            var results = SemanticEngineV2Facade.EmbedAndSearchTopK(
-                queryText,
-                endpoint,
-                apiKey,
-                model,
-                isAzure,
+            var results = SemanticEngineV2Facade.SearchTopKByCosine(
+                queryVectorJson,
                 candidates,
                 topK,
                 minScore);
