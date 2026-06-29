@@ -10,7 +10,7 @@ No vector database required — embeddings are stored as JSON strings in your OD
 |------|--------|-------------|
 | Ingest | `PrepareVectorsFromPdfJson` | PDF → extract text → chunk → embed → return vector records |
 | Debug | `ExtractTextFromPdfWithPageMarkers` | PDF → plain text with `===PAGE:N===` markers, no API call |
-| Search (end-to-end) | `EmbedAndSearchTopKJson` | Embed query text → cosine similarity → top-K results |
+| Search (end-to-end) | `EmbedAndSearchTopKJson` | Embed query text → cosine similarity → top-K results + query vector for caching |
 | Search (pre-computed) | `SearchTopKByCosineJson` | Cosine similarity only, no API call — use when you already have the query vector |
 | Utility | `EmbedTextToVectorJson` | Embed a text string and return the raw vector JSON — use to pre-compute and cache query vectors |
 | Utility | `HashText` | SHA-256 hex hash of any string — use to build stable cache keys for query vectors |
@@ -84,7 +84,7 @@ Returns the raw text of a PDF with explicit page markers. No embedding API call 
 
 ### `EmbedAndSearchTopKJson`
 
-Embeds the query text via the API and returns the most similar stored chunks. Use this in your search/query flow.
+Embeds the query text via the API and returns the most similar stored chunks. Also returns the query vector so you can cache it and reuse it with `SearchTopKByCosineJson` on repeat searches.
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
@@ -92,12 +92,13 @@ Embeds the query text via the API and returns the most similar stored chunks. Us
 | `endpoint` | Text | Embedding API base URL |
 | `apiKey` | Text | API key |
 | `model` | Text | Must match the model used during ingestion |
-| `isAzure` | Boolean | Provider flag |
+| `isAzure` | Boolean | `True` for Azure OpenAI, `False` for OpenAI |
 | `candidatesJson` | Text | JSON array of `VectorCandidateDto` (your stored records) |
 | `topK` | Integer | Number of results to return (default 5) |
 | `minScore` | Decimal | Minimum cosine similarity threshold, 0.0–1.0 (0 = no filter) |
 
-**Returns:** JSON array of `VectorSearchResultDto` ordered by score descending:
+**Returns:**
+- `SearchResultsJson` — JSON array of `VectorSearchResultDto` ordered by score descending:
 ```json
 [
   {
@@ -111,6 +112,7 @@ Embeds the query text via the API and returns the most similar stored chunks. Us
   }
 ]
 ```
+- `QueryVectorJson` — the query vector as a serialized JSON float array. Store this alongside `HashText(queryText)` as the cache key so repeat searches can skip the embedding API call.
 
 ---
 
